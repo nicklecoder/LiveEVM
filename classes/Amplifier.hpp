@@ -19,7 +19,7 @@
 class Amplifier {
 	public:
 		Amplifier() {};
-		Amplifier(int tid, cv::Mat* pSrc, cv::Mat* pDst);
+		Amplifier(int tid, cv::Mat* pSrc, cv::Mat* pDst, cv::Mat* pOrig);
 		~Amplifier();
 
 		void run();

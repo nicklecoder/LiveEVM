@@ -8,6 +8,7 @@
 #include <mutex>
 #include <thread>
 #include <unistd.h>
+#include <time.h>
 
 //OpenCV necessities
 #include <opencv2/highgui/highgui.hpp>
@@ -50,10 +51,6 @@ class Recorder {
 		void getFrame();
 		void initAmplifiers();
 		void initBuffers();
-		cv::Mat pyrDown(cv::Mat &src);
-		void pyrDownEdges(cv::Mat &src, cv::Mat &dst);
-		cv::Mat pyrUp(cv::Mat &src);
-		void pyrUpEdges(cv::Mat &src, cv::Mat &dst);
 		void runAmp();
 
 		//Sliders
