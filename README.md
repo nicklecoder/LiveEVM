@@ -44,3 +44,12 @@ Licensing
 
 This code is distributed under the terms of the license available
 [here](http://people.csail.mit.edu/mrub/vidmag/code/LICENSE.pdf).
+
+Help Us Out
+===========
+
+Like this project? Please spread the word. While I do not need financial
+aid to continue working on this, you can say "thank you" by donating to
+[help these children](http://www.gofundme.com/endjs4). I know these kids
+personally, and they have no chance of staying together as a family or
+having a bright future without our help.
