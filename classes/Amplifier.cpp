@@ -829,6 +829,7 @@ void Amplifier::putNewFrames() {
          }
       }
       tmp.convertTo(this->mDst[idx], typeTo);
+      std::cout << "frame #" << idx << std::endl;
       idx = (idx + 1) % BUF_SIZE;
    }
    this->mProcCursor = (idx + (BUF_SIZE / 2)) % BUF_SIZE;

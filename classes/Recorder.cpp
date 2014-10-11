@@ -1,7 +1,5 @@
 /******************************************************************************
  * File: Recorder.cpp
- * 
- * TODO: implement parameter passing to threads
  *****************************************************************************/
 #include "Recorder.hpp"
 
@@ -13,7 +11,8 @@ int Recorder::mHighLevel = 0;
 int Recorder::mLowLevel = 0;
 
 /**********************************************************
- *
+ * Default constructor
+ * The windows and track bars are created here.
  *********************************************************/
 Recorder::Recorder() {
    // -1 grabs any available camera device.
@@ -40,27 +39,28 @@ Recorder::Recorder() {
 }
 
 /**********************************************************
- *
+ * Default destructor
  *********************************************************/
 Recorder::~Recorder() {
+   //TODO
    //delete [] this->mClean;
    //delete [] this->mAmplified;
    //delete [] this->mReduced;
 }
 
 /**********************************************************
- *
+ * This is the main loop of the program; in this loop, we
+ * call the functions that retrieve video data, signal
+ * worker threads, and display the results to the user.
  *********************************************************/
 void Recorder::run() {
    //Buffers were inited in the constructor
-   unsigned int frameCount = 0;
    time_t now, before;
    time(&now);
    before = now;
    while (1) {
       this->displayFrame();
-      if (frameCount >= BUF_SIZE / 4) {
-         frameCount = 0;
+      if (this->mCursor % (BUF_SIZE / 4) == 0) {
          this->runAmp();
          time(&now);
          std::cout << "FPS: "
@@ -70,7 +70,6 @@ void Recorder::run() {
       }
       this->getFrame();
       this->mCursor = (this->mCursor + 1) % BUF_SIZE;
-      frameCount++;
 
       //check for escape
       if ((cvWaitKey(1) & 255) == 27) {
@@ -96,6 +95,7 @@ void Recorder::displayFrame() {
    if(!this->mClean[this->mCursor].empty() && !this->mAmplified[this->mCursor].empty()) {
       cv::imshow("Clean", this->mClean[this->mCursor]);
       cv::imshow("EVM", this->mAmplified[this->mCursor]);
+      std::cout << "Display #" << this->mCursor << std::endl;
    }
 }
 
@@ -112,7 +112,6 @@ void Recorder::getFrame() {
       frame.copyTo(this->mClean[this->mCursor]);
       frame.copyTo(this->mAmplified[this->mCursor]);
 
-      //TODO: shrink the image, store in process buffer
       frame.convertTo(frame, CV_64F);
       bool filter = Recorder::mParams->getFilter();
       for (int l = 0; l < PYR_LEVELS; l++) {
@@ -174,7 +173,10 @@ void Recorder::initBuffers() {
 }
 
 /**********************************************************
+ * Function: runAmp()
  *
+ * This function signals the next Amplifier instance to
+ * run on its own thread.
  *********************************************************/
 void Recorder::runAmp() {
    std::unique_lock<std::mutex> lk(m[this->mThreadIdx]);
@@ -205,14 +207,16 @@ void Recorder::runAmp() {
 }
 
 /**********************************************************
- *
+ * Callback needed by OpenCV for controlling values set by
+ * the track bars.
  *********************************************************/
 void Recorder::onAmpSlider(int val, void* userData) {
    Recorder::mParams->setAmpLevel(val / 10);
 }
 
 /**********************************************************
- *
+ * Callback needed by OpenCV for controlling values set by
+ * the track bars.
  *********************************************************/
 void Recorder::onFilterSlider(int val, void* userData) {
    if(!Recorder::mParams->setFilter(val)) {
@@ -222,7 +226,8 @@ void Recorder::onFilterSlider(int val, void* userData) {
 }
 
 /**********************************************************
- *
+ * Callback needed by OpenCV for controlling values set by
+ * the track bars.
  *********************************************************/
 void Recorder::onHighSlider(int val, void* userData) {
    if(!Recorder::mParams->setHighLevel(val)) {
@@ -232,7 +237,8 @@ void Recorder::onHighSlider(int val, void* userData) {
 }
 
 /**********************************************************
- *
+ * Callback needed by OpenCV for controlling values set by
+ * the track bars.
  *********************************************************/
 void Recorder::onLowSlider(int val, void* userData) {
    if(!Recorder::mParams->setLowLevel(val)) {
